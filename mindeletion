@@ -1,0 +1,40 @@
+class Solution {
+    public int minimumDeletions(String word, int k) {
+    
+    int n=26;
+    int freq[]=new int [n];
+    // x-'x'=0;
+    // y-'x'=1;
+    // z-'x'=25;
+    for(char ch : word.toCharArray()){
+        freq[ch-'a']++;
+    }
+        int ans = word.length();
+        for(int i=0;i<n;i++){
+            if(freq[i]==0)continue;
+            int currFreq=freq[i];
+            int maxRange=freq[i]+k;
+            int currAns=0;
+            for(int j=0;j<n;j++){
+                if(freq[j]==0)continue;
+                if(freq[j]<freq[i]){
+
+                 
+                    currAns+=freq[j];
+
+                }
+                else if(freq[j]>maxRange){
+                    currAns+=(freq[j]-maxRange);
+
+                }
+
+            }
+            ans=Math.min(ans,currAns);
+
+        }
+        return ans;
+        
+    }
+
+
+    }
