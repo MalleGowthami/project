@@ -1,0 +1,41 @@
+class Solution {
+    public int zigzagSequence(int[][] mat) {
+        int n = mat.length;
+
+        int[] dp = new int[n];
+
+        // First row
+        for (int j = 0; j < n; j++) {
+            dp[j] = mat[0][j];
+        }
+
+        // Remaining rows
+        for (int i = 1; i < n; i++) {
+            int[] newDp = new int[n];
+
+            for (int j = 0; j < n; j++) {
+                int max = 0;
+
+                // Previous column must be different
+                for (int k = 0; k < n; k++) {
+                    if (k != j) {
+                        max = Math.max(max, dp[k]);
+                    }
+                }
+
+                newDp[j] = mat[i][j] + max;
+            }
+
+            dp = newDp;
+        }
+
+        // Maximum value in the last row
+        int ans = 0;
+
+        for (int j = 0; j < n; j++) {
+            ans = Math.max(ans, dp[j]);
+        }
+
+        return ans;
+    }
+}
