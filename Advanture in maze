@@ -1,0 +1,51 @@
+class Solution {
+    public ArrayList<Integer> findWays(int[][] matrix) {
+        int n = matrix.length;
+        int MOD = 1000000007;
+
+        long[][] ways = new long[n][n];
+        int[][] adventure = new int[n][n];
+
+        ways[0][0] = 1;
+        adventure[0][0] = matrix[0][0];
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+
+                if (ways[i][j] == 0)
+                    continue;
+
+                // Move Right
+                if ((matrix[i][j] == 1 || matrix[i][j] == 3)
+                        && j + 1 < n) {
+
+                    ways[i][j + 1] =
+                        (ways[i][j + 1] + ways[i][j]) % MOD;
+
+                    adventure[i][j + 1] =
+                        Math.max(adventure[i][j + 1],
+                        adventure[i][j] + matrix[i][j + 1]);
+                }
+
+                // Move Down
+                if ((matrix[i][j] == 2 || matrix[i][j] == 3)
+                        && i + 1 < n) {
+
+                    ways[i + 1][j] =
+                        (ways[i + 1][j] + ways[i][j]) % MOD;
+
+                    adventure[i + 1][j] =
+                        Math.max(adventure[i + 1][j],
+                        adventure[i][j] + matrix[i + 1][j]);
+                }
+            }
+        }
+
+        ArrayList<Integer> ans = new ArrayList<>();
+
+        ans.add((int) ways[n - 1][n - 1]);
+        ans.add(adventure[n - 1][n - 1]);
+
+        return ans;
+    }
+}
