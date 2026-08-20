@@ -1,0 +1,24 @@
+class Solution {
+
+    int maxDiff(Node root) {
+        return dfs(root, root.data);
+    }
+
+    int dfs(Node node, int maxAncestor) {
+        if (node == null) {
+            return Integer.MIN_VALUE;
+        }
+
+        // Difference between the largest ancestor and current node
+        int currentDiff = maxAncestor - node.data;
+
+        // Update maximum ancestor
+        maxAncestor = Math.max(maxAncestor, node.data);
+
+        // Check left and right subtrees
+        int leftDiff = dfs(node.left, maxAncestor);
+        int rightDiff = dfs(node.right, maxAncestor);
+
+        return Math.max(currentDiff, Math.max(leftDiff, rightDiff));
+    }
+}
