@@ -1,0 +1,121 @@
+import java.util.*;
+
+class Solution {
+
+    static class Node {
+        int row, col, up;
+
+        Node(int row, int col, int up) {
+            this.row = row;
+            this.col = col;
+            this.up = up;
+        }
+    }
+
+    public int numberOfCells(int r, int c, int u, int d, char[][] mat) {
+
+        int n = mat.length;
+        int m = mat[0].length;
+
+        // Starting cell is an obstacle
+        if (mat[r][c] == '#') {
+            return 0;
+        }
+
+        int INF = Integer.MAX_VALUE;
+
+        // Minimum number of upward moves needed
+        // to reach each cell
+        int[][] dist = new int[n][m];
+
+        for (int i = 0; i < n; i++) {
+            Arrays.fill(dist[i], INF);
+        }
+
+        Deque<Node> dq = new ArrayDeque<>();
+
+        dist[r][c] = 0;
+        dq.offerFirst(new Node(r, c, 0));
+
+        int[] dr = {-1, 1, 0, 0};
+        int[] dc = {0, 0, -1, 1};
+
+        while (!dq.isEmpty()) {
+
+            Node cur = dq.pollFirst();
+
+            int row = cur.row;
+            int col = cur.col;
+            int upUsed = cur.up;
+
+            // Ignore outdated state
+            if (upUsed != dist[row][col]) {
+                continue;
+            }
+
+            for (int k = 0; k < 4; k++) {
+
+                int nr = row + dr[k];
+                int nc = col + dc[k];
+
+                // Boundary check
+                if (nr < 0 || nr >= n || nc < 0 || nc >= m) {
+                    continue;
+                }
+
+                // Obstacle
+                if (mat[nr][nc] == '#') {
+                    continue;
+                }
+
+                // Moving upward costs 1
+                int extraUp = (nr < row) ? 1 : 0;
+
+                int newUp = upUsed + extraUp;
+
+                // Upward limit
+                if (newUp > u) {
+                    continue;
+                }
+
+                if (newUp < dist[nr][nc]) {
+
+                    dist[nr][nc] = newUp;
+
+                    if (extraUp == 1) {
+                        // Cost 1
+                        dq.offerLast(new Node(nr, nc, newUp));
+                    } else {
+                        // Cost 0
+                        dq.offerFirst(new Node(nr, nc, newUp));
+                    }
+                }
+            }
+        }
+
+        int answer = 0;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+
+                if (dist[i][j] == INF) {
+                    continue;
+                }
+
+                /*
+                 * down - up = currentRow - startingRow
+                 *
+                 * Therefore:
+                 * down = up + currentRow - startingRow
+                 */
+                int downUsed = dist[i][j] + (i - r);
+
+                if (downUsed <= d) {
+                    answer++;
+                }
+            }
+        }
+
+        return answer;
+    }
+}
