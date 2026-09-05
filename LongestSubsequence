@@ -1,0 +1,21 @@
+import java.util.*;
+
+class Solution {
+    public int longestSubseq(int[] arr) {
+        HashMap<Integer, Integer> dp = new HashMap<>();
+        int maxLen = 1;
+
+        for (int num : arr) {
+            int len = Math.max(
+                dp.getOrDefault(num - 1, 0),
+                dp.getOrDefault(num + 1, 0)
+            ) + 1;
+
+            dp.put(num, Math.max(dp.getOrDefault(num, 0), len));
+
+            maxLen = Math.max(maxLen, dp.get(num));
+        }
+
+        return maxLen;
+    }
+}
