@@ -1,0 +1,59 @@
+class Solution {
+    public int minCount(int[] arr) {
+        int n = arr.length;
+
+        // dp[i][j] = maximum number of elements selected
+        // when the last selected elements of increasing/decreasing
+        // subsequences are represented by i and j.
+        
+        int[][] dp = new int[n + 1][n + 1];
+
+        // dp states are easier to compute by considering each
+        // element as either unused, added to increasing, or decreasing.
+        // Use memoization with (position, lastInc, lastDec).
+        
+        int[][][] memo = new int[n + 1][n + 1][n + 1];
+
+        for (int i = 0; i <= n; i++) {
+            for (int j = 0; j <= n; j++) {
+                java.util.Arrays.fill(memo[i][j], -1);
+            }
+        }
+
+        int maxSelected = solve(arr, 0, -1, -1, memo);
+
+        return n - maxSelected;
+    }
+
+    private int solve(int[] arr, int pos, int lastInc, int lastDec,
+                      int[][][] memo) {
+
+        if (pos == arr.length) {
+            return 0;
+        }
+
+        int li = lastInc + 1;
+        int ld = lastDec + 1;
+
+        if (memo[pos][li][ld] != -1) {
+            return memo[pos][li][ld];
+        }
+
+        // Option 1: Don't select current element
+        int ans = solve(arr, pos + 1, lastInc, lastDec, memo);
+
+        // Option 2: Put current element in increasing subsequence
+        if (lastInc == -1 || arr[pos] > arr[lastInc]) {
+            ans = Math.max(ans,
+                    1 + solve(arr, pos + 1, pos, lastDec, memo));
+        }
+
+        // Option 3: Put current element in decreasing subsequence
+        if (lastDec == -1 || arr[pos] < arr[lastDec]) {
+            ans = Math.max(ans,
+                    1 + solve(arr, pos + 1, lastInc, pos, memo));
+        }
+
+        return memo[pos][li][ld] = ans;
+    }
+}
