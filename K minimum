@@ -1,0 +1,64 @@
+import java.util.*;
+
+class Solution {
+    public int minStepToReachTarget(int[] knightPos, int[] targetPos, int n) {
+
+        // If starting position is already the target
+        if (knightPos[0] == targetPos[0] &&
+            knightPos[1] == targetPos[1]) {
+            return 0;
+        }
+
+        // 8 possible knight moves
+        int[] dx = {2, 2, -2, -2, 1, 1, -1, -1};
+        int[] dy = {1, -1, 1, -1, 2, -2, 2, -2};
+
+        // visited[row][col]
+        boolean[][] visited = new boolean[n + 1][n + 1];
+
+        // Queue stores: row, column, number of moves
+        Queue<int[]> q = new LinkedList<>();
+
+        int startX = knightPos[0];
+        int startY = knightPos[1];
+
+        q.offer(new int[]{startX, startY, 0});
+        visited[startX][startY] = true;
+
+        while (!q.isEmpty()) {
+
+            int[] current = q.poll();
+
+            int x = current[0];
+            int y = current[1];
+            int moves = current[2];
+
+            // Try all 8 knight moves
+            for (int i = 0; i < 8; i++) {
+
+                int newX = x + dx[i];
+                int newY = y + dy[i];
+
+                // Check whether the new position is inside the board
+                if (newX >= 1 && newX <= n &&
+                    newY >= 1 && newY <= n &&
+                    !visited[newX][newY]) {
+
+                    // Target reached
+                    if (newX == targetPos[0] &&
+                        newY == targetPos[1]) {
+                        return moves + 1;
+                    }
+
+                    visited[newX][newY] = true;
+
+                    q.offer(new int[]{newX, newY, moves + 1});
+                }
+            }
+        }
+
+        // Normally a knight can reach every square on n >= 2,
+        // but return -1 if no path exists.
+        return -1;
+    }
+}
