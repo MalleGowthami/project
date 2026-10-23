@@ -1,0 +1,56 @@
+
+class Solution {
+    long count;
+
+    public int pairsViolatingBST(Node root) {
+        count = 0;
+        solve(root);
+        return (int) count;
+    }
+
+    java.util.ArrayList<Integer> solve(Node root) {
+        java.util.ArrayList<Integer> res =
+            new java.util.ArrayList<>();
+
+        if (root == null) {
+            return res;
+        }
+
+        java.util.ArrayList<Integer> left = solve(root.left);
+        java.util.ArrayList<Integer> right = solve(root.right);
+
+        // Count violations between root and left subtree
+        for (int x : left) {
+            if (x > root.data) {
+                count++;
+            }
+        }
+
+        // Count violations between root and right subtree
+        for (int x : right) {
+            if (x < root.data) {
+                count++;
+            }
+        }
+
+        // Count violations between left and right subtrees
+        int i = 0, j = 0;
+
+        while (i < left.size() && j < right.size()) {
+            if (left.get(i) <= right.get(j)) {
+                i++;
+            } else {
+                count += left.size() - i;
+                j++;
+            }
+        }
+
+        // Merge left, right, and root into sorted order
+        res.addAll(left);
+        res.addAll(right);
+        res.add(root.data);
+        java.util.Collections.sort(res);
+
+        return res;
+    }
+}
