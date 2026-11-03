@@ -1,0 +1,87 @@
+import java.util.*;
+
+class Solution {
+
+    int[] parent;
+    int[] size;
+
+    int find(int x) {
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]);
+        }
+        return parent[x];
+    }
+
+    long union(int u, int v) {
+
+        int a = find(u);
+        int b = find(v);
+
+        if (a == b) {
+            return 0;
+        }
+
+        long paths = (long) size[a] * size[b];
+
+        if (size[a] < size[b]) {
+            int temp = a;
+            a = b;
+            b = temp;
+        }
+
+        parent[b] = a;
+        size[a] += size[b];
+
+        return paths;
+    }
+
+    public ArrayList<Integer> maximumWeight(
+        int n, int[][] edges, int[] queries) {
+
+        Arrays.sort(edges, (a, b) -> Integer.compare(a[2], b[2]));
+
+        parent = new int[n + 1];
+        size = new int[n + 1];
+
+        for (int i = 1; i <= n; i++) {
+            parent[i] = i;
+            size[i] = 1;
+        }
+
+        int[][] q = new int[queries.length][2];
+
+        for (int i = 0; i < queries.length; i++) {
+            q[i][0] = queries[i];
+            q[i][1] = i;
+        }
+
+        Arrays.sort(q, (a, b) -> Integer.compare(a[0], b[0]));
+
+        long[] ans = new long[queries.length];
+
+        long total = 0;
+        int j = 0;
+
+        for (int i = 0; i < q.length; i++) {
+
+            int limit = q[i][0];
+
+            while (j < edges.length && edges[j][2] <= limit) {
+
+                total += union(edges[j][0], edges[j][1]);
+
+                j++;
+            }
+
+            ans[q[i][1]] = total;
+        }
+
+        ArrayList<Integer> result = new ArrayList<>();
+
+        for (long value : ans) {
+            result.add((int) value);
+        }
+
+        return result;
+    }
+}
