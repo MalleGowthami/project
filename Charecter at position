@@ -1,0 +1,34 @@
+
+class Solution {
+    public char posInfinite(String s, int pos) {
+
+        long p = pos;
+        int n = s.length();
+
+        while (p > n) {
+
+            long len = n;
+            int step = 1;
+
+            while (len < p) {
+                len = 2 * len + step;
+                step++;
+            }
+
+            long previousLen = (len - step) / 2;
+
+            if (p <= previousLen) {
+                len = previousLen;
+            }
+            else if (p <= previousLen + step) {
+                return '$';
+            }
+            else {
+                p = len - p + 1;
+                len = previousLen;
+            }
+        }
+
+        return s.charAt((int)p - 1);
+    }
+}
